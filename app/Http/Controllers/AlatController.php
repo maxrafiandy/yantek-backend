@@ -25,14 +25,20 @@ class AlatController extends Controller
      */
     public function store(Request $request)
     {
-        $alat = new \App\Alat();
-        $alat->kode = $request->input('kode');
-        $alat->nama = $request->input('nama');
-        $alat->biaya = $request->input('biaya');
-        $alat->durasi = $request->input('durasi');
-        $alat->jumlah_lampiran = $request->input('jumlahLampiran');
-        $alat->jenis_alat_id = $request->input('jenis');
-        $alat->save();
+        try {
+            $alat = new \App\Alat();
+            $alat->kode = $request->input('kode');
+            $alat->nama = $request->input('nama');
+            $alat->biaya = $request->input('biaya');
+            $alat->durasi = $request->input('durasi');
+            $alat->jumlah_lampiran = $request->input('jumlahLampiran');
+            $alat->jenis_alat_id = $request->input('jenis');
+            $alat->save();
+        }
+
+        catch(\Exeption $e) {
+            return response()->json(array('success' => true, 'message' => $e->getMessage()));
+        }
 
         return response()->json(array('success' => true, 'message' => 'new user has been stored'));
     }
@@ -58,18 +64,24 @@ class AlatController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $alat = \App\Alat::find($id);
+        try {
+            $alat = \App\Alat::find($id);
 
-        if ($alat) {
-            $alat->kode = $request->input('kode');
-            $alat->nama = $request->input('nama');
-            $alat->biaya = $request->input('biaya');
-            $alat->durasi = $request->input('durasi');
-            $alat->jumlah_lampiran = $request->input('jumlahLampiran');
-            $alat->jenis_alat_id = $request->input('jenis');
-            $alat->save();
+            if ($alat) {
+                $alat->kode = $request->input('kode');
+                $alat->nama = $request->input('nama');
+                $alat->biaya = $request->input('biaya');
+                $alat->durasi = $request->input('durasi');
+                $alat->jumlah_lampiran = $request->input('jumlahLampiran');
+                $alat->jenis_alat_id = $request->input('jenis');
+                $alat->save();
 
-            return response()->json(array('success' => true, 'message' => 'alat has been updated'));
+                return response()->json(array('success' => true, 'message' => 'alat has been updated'));
+            }
+        }
+
+        catch(\Exeption $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
         }
 
         return response()->json(array('success' => false, 'message' => 'no alat was updated'));
@@ -83,11 +95,17 @@ class AlatController extends Controller
      */
     public function destroy($id)
     {
-        $alat = \App\Alat::find($id);
+        try {
+            $alat = \App\Alat::find($id);
 
-        if ($alat) {
-            $alat->delete();
-            return response()->json(array('success' => true, 'message' => 'alat has been deleted'));
+            if ($alat) {
+                $alat->delete();
+                return response()->json(array('success' => true, 'message' => 'alat has been deleted'));
+            }
+        }
+
+        catch(\Exception $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
         }
 
         return response()->json(array('success' => false, 'message' => 'no user was deleted'));
