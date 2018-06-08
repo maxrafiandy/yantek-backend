@@ -27,14 +27,20 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $user = new \App\User();
-        $user->username = $request->input('userName');
-        $user->firstname = $request->input('firstName');
-        $user->lastname = $request->input('lastName');
-        $user->email = $request->input('email');
-        $user->password = bcrypt($request->input('password'));
-        $user->permission = $request->input('permission');
-        $user->save();
+        try {
+            $user = new \App\User();
+            $user->username = $request->input('userName');
+            $user->firstname = $request->input('firstName');
+            $user->lastname = $request->input('lastName');
+            $user->email = $request->input('email');
+            $user->password = bcrypt($request->input('password'));
+            $user->permission = $request->input('permission');
+            $user->save();
+        }
+
+        catch(\Exception $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
+        }
 
         return response()->json(array('success' => true, 'message' => 'new user has been stored'));
     }
@@ -60,18 +66,24 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = \App\User::find($id);
+        try {
+            $user = \App\User::find($id);
 
-        if ($user) {
-            // $user->username = $request->input('userName');
-            $user->firstname = $request->input('firstName');
-            $user->lastname = $request->input('lastName');
-            // $user->email = $request->input('email');
-            $user->password = bcrypt($request->input('password'));
-            $user->permission = $request->input('permission');
-            $user->save();
+            if ($user) {
+                // $user->username = $request->input('userName');
+                $user->firstname = $request->input('firstName');
+                $user->lastname = $request->input('lastName');
+                // $user->email = $request->input('email');
+                $user->password = bcrypt($request->input('password'));
+                $user->permission = $request->input('permission');
+                $user->save();
 
-            return response()->json(array('success' => true, 'message' => 'user has been updated'));
+                return response()->json(array('success' => true, 'message' => 'user has been updated'));
+            }
+        }
+
+        catch(\Exeption $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
         }
 
         return response()->json(array('success' => false, 'message' => 'no user was updated'));
@@ -87,9 +99,15 @@ class UserController extends Controller
     {
         $user = \App\User::find($id);
 
-        if ($user) {
-            $user->delete();
-            return response()->json(array('success' => true, 'message' => 'user has been deleted'));
+        try {
+            if ($user) {
+                $user->delete();
+                return response()->json(array('success' => true, 'message' => 'user has been deleted'));
+            }
+        }
+
+        catch(\Exeption $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
         }
 
         return response()->json(array('success' => false, 'message' => 'no user was deleted'));
