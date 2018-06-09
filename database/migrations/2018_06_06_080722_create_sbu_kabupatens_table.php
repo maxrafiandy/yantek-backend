@@ -17,10 +17,9 @@ class CreateSbuKabupatensTable extends Migration
             $table->increments('id');
             $table->string('kode', 4)->unique();
             $table->string('nama');
-            $table->integer('wilayah_kerja');
             $table->double('transport');
-            $table->double('penginapan');
-            $table->double('uang_saku');
+            $table->double('penginapan')->default(0);
+            $table->double('uang_saku')->default(0);
             $table->string('kode_provinsi', 2);
             $table->timestamps();
             $table->index('kode_provinsi');

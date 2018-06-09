@@ -25,14 +25,20 @@ class SbuProvinsiController extends Controller
      */
     public function store(Request $request)
     {
-        $sbuProvinsi = new \App\SbuProvinsi();
-        $sbuProvinsi->kode = $request->input('kode');
-        $sbuProvinsi->nama = $request->input('nama');
-        $sbuProvinsi->wilayah_kerja = $request->input('wilayahKerja');
-        $sbuProvinsi->transport = $request->input('transport');
-        $sbuProvinsi->penginapan = $request->input('penginapan');
-        $sbuProvinsi->uang_saku = $request->input('uangSaku');
-        $sbuProvinsi->save();
+        try {
+            $sbuProvinsi = new \App\SbuProvinsi();
+            $sbuProvinsi->kode = $request->input('kode');
+            $sbuProvinsi->nama = $request->input('nama');
+            // $sbuProvinsi->transport = $request->input('transport');
+            $sbuProvinsi->transport = 0;
+            $sbuProvinsi->penginapan = $request->input('penginapan');
+            $sbuProvinsi->uang_saku = $request->input('uangSaku');
+            $sbuProvinsi->save();
+        }
+
+        catch(\Exception $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
+        }
 
         return response()->json(array('success' => true, 'message' => 'new sbu-provinsi has been stored'));
     }
@@ -58,19 +64,24 @@ class SbuProvinsiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $sbuProvinsi = \App\SbuKabupaten::find($id);
+        try {
+            $sbuProvinsi = \App\SbuProvinsi::find($id);
 
-        if ($sbuProvinsi) {
-            $sbuProvinsi = new \App\SbuProvinsi();
-            $sbuProvinsi->kode = $request->input('kode');
-            $sbuProvinsi->nama = $request->input('nama');
-            $sbuProvinsi->wilayah_kerja = $request->input('wilayahKerja');
-            $sbuProvinsi->transport = $request->input('transport');
-            $sbuProvinsi->penginapan = $request->input('penginapan');
-            $sbuProvinsi->uang_saku = $request->input('uangSaku');
-            $sbuProvinsi->save();
+            if ($sbuProvinsi) {
+                $sbuProvinsi->kode = $request->input('kode');
+                $sbuProvinsi->nama = $request->input('nama');
+                // $sbuProvinsi->transport = $request->input('transport');
+                $sbuProvinsi->transport = 0;
+                $sbuProvinsi->penginapan = $request->input('penginapan');
+                $sbuProvinsi->uang_saku = $request->input('uangSaku');
+                $sbuProvinsi->save();
 
-            return response()->json(array('success' => true, 'message' => 'sbu-provinsi has been updated'));
+                return response()->json(array('success' => true, 'message' => 'sbu-provinsi has been updated'));
+            }
+        }
+
+        catch(\Exeption $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
         }
 
         return response()->json(array('success' => false, 'message' => 'no sbu-provinsi was updated'));
@@ -84,11 +95,17 @@ class SbuProvinsiController extends Controller
      */
     public function destroy($id)
     {
-        $sbuProvinsi = \App\SbuProvinsi::find($id);
+        try {
+            $sbuProvinsi = \App\SbuProvinsi::find($id);
 
-        if ($sbuProvinsi) {
-            $sbuProvinsi->delete();
-            return response()->json(array('success' => true, 'message' => 'sbu-provinsi has been deleted'));
+            if ($sbuProvinsi) {
+                $sbuProvinsi->delete();
+                return response()->json(array('success' => true, 'message' => 'sbu-provinsi has been deleted'));
+            }
+        }
+
+        catch(\Exception $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
         }
 
         return response()->json(array('success' => false, 'message' => 'no sbu-provinsi was deleted'));

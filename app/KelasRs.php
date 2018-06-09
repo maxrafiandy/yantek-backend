@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class JenisIrm extends Model
+class KelasRs extends Model
 {
-    //
+    protected $table = 'kelas_rs';
 }

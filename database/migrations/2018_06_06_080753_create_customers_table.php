@@ -24,7 +24,8 @@ class CreateCustomersTable extends Migration
             $table->string('jabatan_cp');
             $table->string('kode_provinsi', 2);
             $table->string('kode_kabupaten', 4);
-            $table->integer('jenis_irm_id');
+            $table->integer('fasyankes_id');
+            $table->integer('kelas_rs_id')->nullable();
             $table->integer('penyelenggara_id');
             $table->timestamps();
         });

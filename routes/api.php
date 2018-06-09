@@ -23,5 +23,6 @@ Route::resource('jenis-alat', 'JenisAlatController');
 Route::resource('customer', 'CustomerController');
 Route::resource('penyelenggara', 'CustomerController');
 Route::resource('sbu-provinsi', 'SbuProvinsiController');
+Route::resource('sbu-provinsi.sbu-kabupaten', 'SbuKabupatenController');
 Route::resource('sbu-kabupaten', 'SbuKabupatenController');
 Route::resource('petugas', 'Petugas');

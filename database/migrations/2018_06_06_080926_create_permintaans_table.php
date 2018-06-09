@@ -19,8 +19,12 @@ class CreatePermintaansTable extends Migration
             $table->date('tanggal');
             $table->date('jadwal_rekalibrasi')->nullable();
             $table->date('tanggal_terima');
-            $table->date('penanggung_jawab_id');
+            $table->date('perihal');
+            $table->string('keterangan')->nullable();
             $table->date('customer_id');
+            $table->integer('jabatan_id');
+            $table->integer('penanggung_jawab_id');
+            $table->integer('permintaan_id')->nullable(); // if current row has been revised
             $table->timestamps();
         });
     }

@@ -13,7 +13,12 @@ class PermintaanController extends Controller
      */
     public function index()
     {
-        //
+        $query = "select kup.*
+            from permintaan kup
+            join customer cs on cs.id = kup.customer.id";
+
+        $permintaan = \DB::select($query);
+        return response()->json(array('permintaan' => $permintaan));
     }
 
     /**
@@ -35,7 +40,13 @@ class PermintaanController extends Controller
      */
     public function show($id)
     {
-        //
+        $query = "select kup.*
+            from permintaan kup
+            join customer cs on cs.id = kup.customer.id
+            where kup.id = $id";
+
+        $permintaan = \DB::select($query);
+        return response()->json(array('permintaan' => collect($permintaan)->first()));
     }
 
     /**

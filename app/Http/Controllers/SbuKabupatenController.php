@@ -13,7 +13,14 @@ class SbuKabupatenController extends Controller
      */
     public function index()
     {
-      $sbuKabupaten = \App\SbuKabupaten::all();
+      // $sbuKabupaten = \App\SbuKabupaten::all();
+      $query = "select
+        kab.*,
+        prov.nama AS provinsi
+        from sbu_kabupaten kab
+        join sbu_provinsi prov on prov.kode = kab.kode_provinsi";
+
+      $sbuKabupaten = \DB::select($query);
       return response()->json(array('sbu_kabupaten' => $sbuKabupaten));
     }
 
@@ -25,15 +32,23 @@ class SbuKabupatenController extends Controller
      */
     public function store(Request $request)
     {
-        $sbuKabupaten = new \App\SbuKabupaten();
-        $sbuKabupaten->kode = $request->input('kode');
-        $sbuKabupaten->nama = $request->input('nama');
-        $sbuKabupaten->wilayah_kerja = $request->input('wilayahKerja');
-        $sbuKabupaten->transport = $request->input('transport');
-        $sbuKabupaten->penginapan = $request->input('penginapan');
-        $sbuKabupaten->uang_saku = $request->input('uangSaku');
-        $sbuKabupaten->kode_provinsi = $request->input('kodeProvinsi');
-        $sbuKabupaten->save();
+        try {
+            $sbuKabupaten = new \App\SbuKabupaten();
+            $sbuKabupaten->kode = $request->input('kode');
+            $sbuKabupaten->nama = $request->input('nama');
+            // $sbuKabupaten->wilayah_kerja = $request->input('wilayahKerja');
+            $sbuKabupaten->transport = $request->input('transport');
+            // $sbuKabupaten->penginapan = $request->input('penginapan');
+            // $sbuKabupaten->uang_saku = $request->input('uangSaku');
+            $sbuKabupaten->penginapan = 0;
+            $sbuKabupaten->uang_saku = 0;
+            $sbuKabupaten->kode_provinsi = $request->input('kodeProvinsi');
+            $sbuKabupaten->save();
+        }
+
+        catch(\Exception $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
+        }
 
         return response()->json(array('success' => true, 'message' => 'new sbu-kabupaten has been stored'));
     }
@@ -46,8 +61,16 @@ class SbuKabupatenController extends Controller
      */
     public function show($id)
     {
-        $sbuKabupaten = \App\SbuKabupaten::find($id);
-        return response()->json(array('sbu_kabupaten' => $sbuKabupaten));
+        // $sbuKabupaten = \App\SbuKabupaten::find($id);
+        $query = "select
+          kab.*,
+          prov.nama AS provinsi
+          from sbu_kabupaten kab
+          join sbu_provinsi prov on prov.kode = kab.kode_provinsi
+          where kab.id = $id";
+
+        $sbuKabupaten = \DB::select($query);
+        return response()->json(array('sbu_kabupaten' => collect($sbuKabupaten)->first()));
     }
 
     /**
@@ -59,19 +82,27 @@ class SbuKabupatenController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $sbuKabupaten = \App\SbuKabupaten::find($id);
+        try {
+            $sbuKabupaten = \App\SbuKabupaten::find($id);
 
-        if ($sbuKabupaten) {
-            $sbuKabupaten->kode = $request->input('kode');
-            $sbuKabupaten->nama = $request->input('nama');
-            $sbuKabupaten->wilayah_kerja = $request->input('wilayahKerja');
-            $sbuKabupaten->transport = $request->input('transport');
-            $sbuKabupaten->penginapan = $request->input('penginapan');
-            $sbuKabupaten->uang_saku = $request->input('uangSaku');
-            $sbuKabupaten->kode_provinsi = $request->input('kodeProvinsi');
-            $sbuKabupaten->save();
+            if ($sbuKabupaten) {
+                $sbuKabupaten->kode = $request->input('kode');
+                $sbuKabupaten->nama = $request->input('nama');
+                // $sbuKabupaten->wilayah_kerja = $request->input('wilayahKerja');
+                $sbuKabupaten->transport = $request->input('transport');
+                // $sbuKabupaten->penginapan = $request->input('penginapan');
+                // $sbuKabupaten->uang_saku = $request->input('uangSaku');
+                $sbuKabupaten->penginapan = 0;
+                $sbuKabupaten->uang_saku = 0;
+                $sbuKabupaten->kode_provinsi = $request->input('kodeProvinsi');
+                $sbuKabupaten->save();
 
-            return response()->json(array('success' => true, 'message' => 'sbu-kabupaten has been updated'));
+                return response()->json(array('success' => true, 'message' => 'sbu-kabupaten has been updated'));
+            }
+        }
+
+        catch(\Exception $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
         }
 
         return response()->json(array('success' => false, 'message' => 'no sbu-kabupaten was updated'));
@@ -85,11 +116,17 @@ class SbuKabupatenController extends Controller
      */
     public function destroy($id)
     {
-        $sbuKabupaten = \App\SbuKabupaten::find($id);
+        try {
+            $sbuKabupaten = \App\SbuKabupaten::find($id);
 
-        if ($sbuKabupaten) {
-            $sbuKabupaten->delete();
-            return response()->json(array('success' => true, 'message' => 'sbu-kabupaten has been deleted'));
+            if ($sbuKabupaten) {
+                $sbuKabupaten->delete();
+                return response()->json(array('success' => true, 'message' => 'sbu-kabupaten has been deleted'));
+            }
+        }
+
+        catch (\Exception $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
         }
 
         return response()->json(array('success' => false, 'message' => 'no sbu-kabupaten was deleted'));

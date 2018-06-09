@@ -17,8 +17,7 @@ class CreateSbuProvinsisTable extends Migration
             $table->increments('id');
             $table->string('kode', 2)->unique();
             $table->string('nama');
-            $table->integer('wilayah_kerja');
-            $table->double('transport');
+            $table->double('transport')->default(0);
             $table->double('penginapan');
             $table->double('uang_saku');
             $table->timestamps();

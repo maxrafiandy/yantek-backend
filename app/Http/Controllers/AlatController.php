@@ -37,7 +37,7 @@ class AlatController extends Controller
         }
 
         catch(\Exeption $e) {
-            return response()->json(array('success' => true, 'message' => $e->getMessage()));
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
         }
 
         return response()->json(array('success' => true, 'message' => 'new user has been stored'));

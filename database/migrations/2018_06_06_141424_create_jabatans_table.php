@@ -17,6 +17,7 @@ class CreateJabatansTable extends Migration
             $table->increments('id');
             $table->string('nama');
             $table->string('keterangan')->nullable();
+            $table->integer('penanggung_jawab_id');
             $table->timestamps();
         });
     }
