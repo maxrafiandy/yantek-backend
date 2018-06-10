@@ -13,7 +13,27 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $customer = \App\Customer::all();
+        $query =  "select
+            cs.*,
+            prov.nama AS provinsi,
+            kab.nama AS kabupaten,
+            fks.nama AS fasyankes,
+            plg.nama AS penyelenggara,
+            jp.nama AS jenis_pejabat,
+            rs.nama AS kelas_rs,
+            case
+                when cs.wilayah_kerja_id = 1 then 'Wilayah kerja'
+                else 'Diluar wilayah kerja'
+            end AS wilayah_kerja
+            from customer cs
+            join sbu_provinsi prov on prov.kode = cs.kode_provinsi
+            join sbu_kabupaten kab on kab.kode = cs.kode_kabupaten
+            join fasyankes fks on fks.id = cs.fasyankes_id
+            join penyelenggara plg on plg.id = cs.penyelenggara_id
+            join jenis_pejabat jp on jp.id = cs.jenis_pejabat_id
+            left join kelas_rs rs on rs.id = cs.kelas_rs_id";
+
+        $customer = \DB::select($query);
         return response()->json(array('customer' => $customer));
     }
 
@@ -25,18 +45,31 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $customer = new \App\Customer();
-        $customer->nomor_irm = $request->input('nomorIrm');
-        $customer->alamat = $request->input('alamat');
-        $customer->nomor_telepon = $request->input('nomorTelepon');
-        $customer->fax = $request->input('fax');
-        $customer->email = $request->input('email');
-        $customer->contact_person = $request->input('contactPerson');
-        $customer->jabatan_cp = $request->input('jabatanCp');
-        $customer->kode_provinsi = $request->input('kodeProvinsi');
-        $customer->kode_kabupaten = $request->input('kodeKabupaten');
-        $customer->jenis_irm = $request->input('jenisIrm');
-        $customer->save();
+        try {
+            $customer = new \App\Customer();
+            $customer->nomor_irm = $request->input('nomorIrm');
+            $customer->instansi = $request->input('instansi');
+            $customer->alamat = $request->input('alamat');
+            $customer->nomor_telepon = $request->input('nomorTelepon');
+            $customer->fax = $request->input('fax');
+            $customer->email = $request->input('email');
+            $customer->contact_person = $request->input('contactPerson');
+            $customer->jabatan_cp = $request->input('jabatanCp');
+            $customer->kode_provinsi = $request->input('kodeProvinsi');
+            $customer->kode_kabupaten = $request->input('kodeKabupaten');
+            $customer->fasyankes_id = $request->input('fasyankesId');
+            $customer->kelas_rs_id = $request->input('kelasRsId');
+            $customer->penyelenggara_id = $request->input('penyelenggaraId');
+            $customer->jenis_pejabat_id = $request->input('jenisPejabatId');
+            $customer->wilayah_kerja_id = $request->input('wilayahKerjaId');
+            $customer->keterangan = $request->input('keterangan');
+            
+            $customer->save();
+        }
+
+        catch (\Exception $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
+        }
 
         return response()->json(array('success' => true, 'message' => 'new customer has been stored'));
     }
@@ -49,8 +82,29 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        $customer = \App\Customer::find($id);
-        return response()->json(array('customer' => $customer));
+        $query =  "select
+            cs.*,
+            prov.nama AS provinsi,
+            kab.nama AS kabupaten,
+            fks.nama AS fasyankes,
+            plg.nama AS penyelenggara,
+            jp.nama AS jenis_pejabat,
+            rs.nama AS kelas_rs,
+            case
+                when cs.wilayah_kerja_id = 1 then 'Wilayah kerja'
+                else 'Diluar wilayah kerja'
+            end AS wilayah_kerja
+            from customer cs
+            join sbu_provinsi prov on prov.kode = cs.kode_provinsi
+            join sbu_kabupaten kab on kab.kode = cs.kode_kabupaten
+            join fasyankes fks on fks.id = cs.fasyankes_id
+            join penyelenggara plg on plg.id = cs.penyelenggara_id
+            join jenis_pejabat jp on jp.id = cs.jenis_pejabat_id
+            left join kelas_rs rs on rs.id = cs.kelas_rs_id
+            where cs.id=$id";
+
+        $customer = \DB::select($query);
+        return response()->json(array('customer' => collect($customer)->first()));
     }
 
     /**
@@ -62,23 +116,34 @@ class CustomerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $customer = \App\Customer::find($id);
+        try {
+            $customer = \App\Customer::find($id);
 
-        if ($customer) {
-            $customer->nomor_irm = $request->input('nomorIrm');
-            $customer->alamat = $request->input('alamat');
-            $customer->nomor_telepon = $request->input('nomorTelepon');
-            $customer->fax = $request->input('fax');
-            $customer->email = $request->input('email');
-            $customer->contact_person = $request->input('contactPerson');
-            $customer->jabatan_cp = $request->input('jabatanCp');
-            $customer->kode_provinsi = $request->input('kodeProvinsi');
-            $customer->kode_kabupaten = $request->input('kodeKabupaten');
-            $customer->jenis_irm_id = $request->input('jenisIrm');
-            $customer->penyelenggara_id = $request->input('penyelenggara');
-            $customer->save();
+            if ($customer) {
+                $customer->nomor_irm = $request->input('nomorIrm');
+                $customer->instansi = $request->input('instansi');
+                $customer->alamat = $request->input('alamat');
+                $customer->nomor_telepon = $request->input('nomorTelepon');
+                $customer->fax = $request->input('fax');
+                $customer->email = $request->input('email');
+                $customer->contact_person = $request->input('contactPerson');
+                $customer->jabatan_cp = $request->input('jabatanCp');
+                $customer->kode_provinsi = $request->input('kodeProvinsi');
+                $customer->kode_kabupaten = $request->input('kodeKabupaten');
+                $customer->fasyankes_id = $request->input('fasyankesId');
+                $customer->kelas_rs_id = $request->input('kelasRsId');
+                $customer->penyelenggara_id = $request->input('penyelenggaraId');
+                $customer->jenis_pejabat_id = $request->input('jenisPejabatId');
+                $customer->wilayah_kerja_id = $request->input('wilayahKerjaId');
+                $customer->keterangan = $request->input('keterangan');
+                $customer->save();
 
-            return response()->json(array('success' => true, 'message' => 'customer has been updated'));
+                return response()->json(array('success' => true, 'message' => 'customer has been updated'));
+            }
+        }
+
+        catch(\Exeption $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
         }
 
         return response()->json(array('success' => false, 'message' => 'no customer was updated'));
@@ -92,11 +157,17 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        $customer = \App\Customer::find($id);
+        try {
+            $customer = \App\Customer::find($id);
 
-        if ($customer) {
-            $customer->delete();
-            return response()->json(array('success' => true, 'message' => 'customer has been deleted'));
+            if ($customer) {
+                $customer->delete();
+                return response()->json(array('success' => true, 'message' => 'customer has been deleted'));
+            }
+        }
+
+        catch(\Exception $e) {
+            return response()->json(array('success' => false, 'message' => $e->getMessage()));
         }
 
         return response()->json(array('success' => false, 'message' => 'no customer was deleted'));
